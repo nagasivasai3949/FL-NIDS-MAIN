@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
 import { useApp } from './context/AppContext.jsx';
+import { PatternDefs } from './lib/palette.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Dataset from './pages/Dataset.jsx';
 import Clients from './pages/Clients.jsx';
@@ -35,10 +36,11 @@ function Logo() {
 }
 
 export default function App() {
-  const { job } = useApp();
+  const { job, print, setPrint } = useApp();
   return (
-    <div className="flex min-h-full bg-navy-900">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-navy-600/60 bg-navy-950 md:flex">
+    <div className="flex min-h-full bg-navy-900 print:bg-white">
+      <PatternDefs />
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-navy-600/60 bg-navy-950 md:flex print:!hidden">
         <Logo />
         <nav className="flex-1 space-y-1 px-3">
           {NAV.map((n) => (
@@ -49,7 +51,15 @@ export default function App() {
             </NavLink>
           ))}
         </nav>
-        <div className="border-t border-navy-600/60 px-5 py-4 text-xs text-slate-500">
+        <div className="space-y-3 border-t border-navy-600/60 px-5 py-4 text-xs text-slate-500">
+          <button type="button" onClick={() => setPrint(!print)} aria-pressed={print}
+            title="White background, black text, light-coloured charts - for colour photocopies and printing"
+            className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-medium transition ${print ? 'border-cyan bg-cyan/10 text-cyan' : 'border-navy-600 text-slate-300 hover:bg-navy-800'}`}>
+            <span>Print mode</span>
+            <span className={`h-4 w-8 rounded-full p-0.5 transition ${print ? 'bg-cyan' : 'bg-navy-600'}`}>
+              <span className={`block h-3 w-3 rounded-full bg-[#ffffff] transition ${print ? 'translate-x-4' : ''}`} />
+            </span>
+          </button>
           {job.status === 'running'
             ? <span className="flex items-center gap-2 text-cyan"><span className="h-2 w-2 animate-pulse rounded-full bg-cyan" />Training in progress</span>
             : <span>B.Tech project demo</span>}
@@ -58,11 +68,12 @@ export default function App() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* mobile navigation */}
-        <nav className="flex gap-1 overflow-x-auto border-b border-navy-600/60 bg-navy-950 px-3 py-2 md:hidden">
+        <nav className="flex gap-1 overflow-x-auto border-b border-navy-600/60 bg-navy-950 px-3 py-2 md:hidden print:!hidden">
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.to === '/'}
               className={({ isActive }) => `whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium ${isActive ? 'bg-accent/20 text-cyan' : 'text-slate-300'}`}>{n.label}</NavLink>
           ))}
+          <button type="button" onClick={() => setPrint(!print)} className="ml-auto whitespace-nowrap rounded-md border border-navy-600 px-3 py-1.5 text-xs font-medium text-slate-300">{print ? 'Print mode: on' : 'Print mode'}</button>
         </nav>
         <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-8 md:px-8">
           <Routes>

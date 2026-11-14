@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useApp } from '../context/AppContext.jsx';
+import { COLORS } from '../lib/palette.jsx';
 
-export const COLORS = {
-  fedavg: '#3b82f6', median: '#22d3ee', centralized: '#a78bfa', local_ensemble: '#f59e0b',
-  grid: '#1e2f5c', axis: '#8aa0c8', danger: '#f87171', ok: '#34d399',
-};
+export { COLORS };
 export const MODEL_LABELS = {
   centralized: 'Centralized MLP', local_ensemble: 'Local Ensemble', fedavg: 'Federated (FedAvg)', median: 'Federated (Median)',
 };
@@ -15,7 +14,7 @@ export const tooltipStyle = {
   contentStyle: { background: '#0a1224', border: '1px solid #1e2f5c', borderRadius: 8, fontSize: 12, color: '#dbe5f7' },
   labelStyle: { color: '#8aa0c8' },
   itemStyle: { color: '#dbe5f7' },
-  cursor: { fill: 'rgba(59,130,246,0.08)' },
+  cursor: { fill: 'rgba(120,120,120,0.12)' },
 };
 
 export function PageHeader({ title, subtitle, children }) {
@@ -58,10 +57,10 @@ export function Stat({ label, value, hint, accent = 'text-white' }) {
 }
 
 const BTN = {
-  primary: 'bg-accent text-white hover:bg-blue-500 disabled:hover:bg-accent',
+  primary: 'bg-accent text-[#ffffff] hover:bg-blue-500 disabled:hover:bg-accent',
   cyan: 'bg-cyan text-navy-950 hover:bg-cyan-300 disabled:hover:bg-cyan',
   ghost: 'border border-navy-600 text-slate-200 hover:bg-navy-700 disabled:hover:bg-transparent',
-  danger: 'bg-red-500/90 text-white hover:bg-red-500 disabled:hover:bg-red-500/90',
+  danger: 'bg-red-500/90 text-[#ffffff] hover:bg-red-500 disabled:hover:bg-red-500/90',
 };
 export function Button({ variant = 'primary', className = '', ...props }) {
   return (
@@ -160,6 +159,7 @@ export function Spinner() {
 
 /** Confusion matrix as a colour-scaled grid. rows = actual class, columns = predicted class. */
 export function ConfusionMatrix({ matrix, classNames, normalize = false }) {
+  const { print } = useApp();
   const rowSums = matrix.map((r) => r.reduce((a, b) => a + b, 0));
   const max = Math.max(1, ...matrix.flat());
   return (
@@ -183,10 +183,15 @@ export function ConfusionMatrix({ matrix, classNames, normalize = false }) {
                 const share = normalize ? (rowSums[i] ? v / rowSums[i] : 0) : v / max;
                 const diag = i === j;
                 const rgb = diag ? '34,211,238' : '248,113,113';
+                // print mode: light colours - green = correct (diagonal), red/orange = errors; darker tint = more samples
+                const pr = diag ? '34,197,94' : '239,68,68';
+                const style = print
+                  ? { background: `rgba(${pr},${(0.10 + share * 0.55).toFixed(3)})`, color: '#111111', border: diag ? '2px solid #15803d' : '1px solid #d4d4d4' }
+                  : { background: `rgba(${rgb},${0.08 + share * 0.75})` };
                 return (
                   <td key={j} title={`Actual ${classNames[i]} -> predicted ${classNames[j]}: ${v}`}
-                    className="h-12 min-w-[64px] rounded-md text-center font-mono text-[13px] text-white"
-                    style={{ background: `rgba(${rgb},${0.08 + share * 0.75})` }}>
+                    className="h-12 min-w-[64px] rounded-md text-center font-mono text-[13px] font-semibold text-white"
+                    style={style}>
                     {normalize ? `${(share * 100).toFixed(1)}%` : v}
                   </td>
                 );
@@ -195,7 +200,7 @@ export function ConfusionMatrix({ matrix, classNames, normalize = false }) {
           ))}
         </tbody>
       </table>
-      <div className="mt-2 text-center text-xs text-slate-500">Rows: actual class. Cyan = correct, red = errors.</div>
+      <div className="mt-2 text-center text-xs text-slate-500">{print ? 'Rows: actual class. Green = correct, red = errors; darker = more samples.' : 'Rows: actual class. Cyan = correct, red = errors.'}</div>
     </div>
   );
 }

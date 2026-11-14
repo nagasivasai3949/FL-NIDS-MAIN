@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useApp } from '../context/AppContext.jsx';
 import { Alert, Badge, Button, Card, COLORS, Empty, Field, LinkButton, NumberInput, PageHeader, Select, Table, Td, tooltipStyle } from '../components/ui.jsx';
+import { barProps, classBarProps, lineProps, ROLE } from '../lib/palette.jsx';
 
 export const CLASS_COLORS = ['#3b82f6', '#22d3ee', '#a78bfa', '#f59e0b', '#34d399', '#f472b6', '#fb923c', '#94a3b8'];
 
 export default function Clients() {
-  const { prepared, partition, clientCfg, configureClients } = useApp();
+  const { prepared, partition, clientCfg, configureClients, print } = useApp();
   const [cfg, setCfg] = useState(clientCfg);
   const [error, setError] = useState('');
   useEffect(() => setCfg(clientCfg), [clientCfg]);
@@ -78,7 +79,7 @@ export default function Clients() {
                     <YAxis stroke={COLORS.axis} fontSize={11} />
                     <Tooltip {...tooltipStyle} />
                     <Legend wrapperStyle={{ fontSize: 12 }} />
-                    {classNames.map((c, i) => <Bar key={c} dataKey={c} stackId="a" fill={CLASS_COLORS[i % CLASS_COLORS.length]} />)}
+                    {classNames.map((c, i) => <Bar key={c} dataKey={c} stackId="a" {...classBarProps(i, print, CLASS_COLORS[i % CLASS_COLORS.length])} />)}
                   </BarChart>
                 </ResponsiveContainer>
               </div>

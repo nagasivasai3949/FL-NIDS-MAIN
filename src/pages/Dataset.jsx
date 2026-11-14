@@ -5,9 +5,10 @@ import { datasetStats } from '../ml/preprocess.js';
 import { previewRows, tableToCsv } from '../ml/csv.js';
 import { generateSampleTable } from '../ml/sampleData.js';
 import { Alert, Badge, Button, Card, COLORS, Field, Input, LinkButton, NumberInput, PageHeader, Select, Stat, Table, Td, tooltipStyle } from '../components/ui.jsx';
+import { barProps, classBarProps, lineProps, ROLE } from '../lib/palette.jsx';
 
 export default function Dataset() {
-  const { table, datasetName, target, setTarget, prepared, loadSample, loadFile, prepare } = useApp();
+  const { table, datasetName, target, setTarget, prepared, loadSample, loadFile, prepare, print } = useApp();
   const [rows, setRows] = useState(6000);
   const [opts, setOpts] = useState({ missingStrategy: 'median', scaling: 'standard', testSize: 0.2, maxRows: 8000 });
   const [error, setError] = useState('');
@@ -111,7 +112,7 @@ export default function Dataset() {
                       <XAxis dataKey="class" stroke={COLORS.axis} fontSize={11} />
                       <YAxis stroke={COLORS.axis} fontSize={11} />
                       <Tooltip {...tooltipStyle} />
-                      <Bar dataKey="count" name="Samples" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="count" name="Samples" {...barProps('s1', print, '#3b82f6')} radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

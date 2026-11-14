@@ -25,6 +25,15 @@ Engine sanity test without a browser: `node scripts/engine-test.mjs`.
 5. **Model Comparison** -> *Run comparison* for Centralized vs Local Ensemble vs FedAvg vs Median.
 6. **Evaluation** -> accuracy, macro precision/recall/F1, false-positive rate, confusion matrix, communication payload.
 
+## Print / photocopy mode
+
+For photocopies, Xerox and mono laser printers, switch on **Print mode** (toggle at the bottom of the sidebar).
+It uses a white page, black text and well-separated grays. Charts get a second cue besides color:
+dashed vs solid lines with different markers (circle, square, triangle, diamond) and hatched / dotted / solid bar fills.
+The confusion matrix uses darkness for counts and a thick border for correct predictions.
+Then press `Ctrl+P`, tick **Background graphics**, and print (the sidebar is hidden automatically).
+The palette lives in `src/lib/palette.jsx` and the CSS overrides at the end of `src/index.css`.
+
 ## Where things are
 
 | Paper concept | File |

@@ -3,8 +3,10 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import { useApp } from '../context/AppContext.jsx';
 import JobPanel from '../components/JobPanel.jsx';
 import { Alert, Badge, Button, Card, COLORS, Empty, Field, LinkButton, PageHeader, Select, Table, Td, pct, tooltipStyle } from '../components/ui.jsx';
+import { barProps, classBarProps, lineProps, ROLE } from '../lib/palette.jsx';
 
 function SweepChart({ sweep }) {
+  const { print } = useApp();
   const isMal = sweep.param === 'malicious';
   const xLabel = isMal ? 'Number of malicious clients' : 'Client dropout rate';
   const x = (v) => (isMal ? v : `${Math.round(v * 100)}%`);
@@ -20,8 +22,8 @@ function SweepChart({ sweep }) {
             <YAxis {...axis} domain={[0, 1]} tickFormatter={(v) => `${Math.round(v * 100)}%`} />
             <Tooltip {...tooltipStyle} formatter={(v) => pct(v)} />
             <Legend verticalAlign="top" wrapperStyle={{ fontSize: 12 }} />
-            <Line type="monotone" dataKey="FedAvg" stroke={COLORS.fedavg} strokeWidth={2.5} dot={{ r: 4 }} />
-            <Line type="monotone" dataKey="Median" stroke={COLORS.median} strokeWidth={2.5} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="FedAvg" {...lineProps('s1', print, COLORS.fedavg, { r: 4 })} />
+            <Line type="monotone" dataKey="Median" {...lineProps('s2', print, COLORS.median, { r: 4 })} />
           </LineChart>
         </ResponsiveContainer>
       </div>

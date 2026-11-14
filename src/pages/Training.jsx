@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext.jsx';
 import JobPanel from '../components/JobPanel.jsx';
 import { Badge, Button, Card, COLORS, Empty, Field, Input, LinkButton, NumberInput, PageHeader, Table, Td, pct, tooltipStyle } from '../components/ui.jsx';
+import { barProps, classBarProps, lineProps, ROLE } from '../lib/palette.jsx';
 
 const ALGOS = [
   { id: 'fedavg', name: 'FedAvg', formula: 'w = sum_k (n_k / N) * w_k', text: 'Sample-weighted average of client models. Efficient, but a few corrupted updates can drag the average away.' },
@@ -11,6 +12,7 @@ const ALGOS = [
 ];
 
 export function RoundCharts({ history }) {
+  const { print } = useApp();
   const data = history.map((h) => ({ round: h.round, 'Train loss': h.train_loss, 'Test loss': h.test_loss, Accuracy: h.accuracy, 'Macro F1': h.f1_macro }));
   const axis = { stroke: COLORS.axis, fontSize: 11 };
   return (
@@ -24,8 +26,8 @@ export function RoundCharts({ history }) {
               <YAxis {...axis} />
               <Tooltip {...tooltipStyle} formatter={(v) => v.toFixed(4)} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Line type="monotone" dataKey="Train loss" stroke="#f59e0b" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="monotone" dataKey="Test loss" stroke="#22d3ee" strokeWidth={2} dot={false} isAnimationActive={false} />
+              <Line type="monotone" dataKey="Train loss" {...lineProps('s2', print, '#f59e0b')} />
+              <Line type="monotone" dataKey="Test loss" {...lineProps('s1', print, '#22d3ee')} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -39,8 +41,8 @@ export function RoundCharts({ history }) {
               <YAxis {...axis} domain={[0, 1]} tickFormatter={(v) => `${Math.round(v * 100)}%`} />
               <Tooltip {...tooltipStyle} formatter={(v) => pct(v)} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Line type="monotone" dataKey="Accuracy" stroke="#3b82f6" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="monotone" dataKey="Macro F1" stroke="#a78bfa" strokeWidth={2} dot={false} isAnimationActive={false} />
+              <Line type="monotone" dataKey="Accuracy" {...lineProps('s1', print, '#3b82f6')} />
+              <Line type="monotone" dataKey="Macro F1" {...lineProps('s2', print, '#a78bfa')} />
             </LineChart>
           </ResponsiveContainer>
         </div>

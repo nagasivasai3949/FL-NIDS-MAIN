@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useApp } from '../context/AppContext.jsx';
 import { Badge, Card, COLORS, ConfusionMatrix, Empty, LinkButton, MODEL_LABELS, PageHeader, Select, Stat, Table, Td, formatBytes, pct, tooltipStyle } from '../components/ui.jsx';
+import { barProps, classBarProps, lineProps, ROLE } from '../lib/palette.jsx';
 
 /** Turns saved experiments into a flat list of evaluable models. */
 function buildOptions(experiments) {
@@ -20,7 +21,7 @@ function buildOptions(experiments) {
 }
 
 export default function Evaluation() {
-  const { experiments, prepared } = useApp();
+  const { experiments, prepared, print } = useApp();
   const [params, setParams] = useSearchParams();
   const [normalize, setNormalize] = useState(false);
   const options = useMemo(() => buildOptions(experiments), [experiments]);
@@ -88,8 +89,8 @@ export default function Evaluation() {
                 <YAxis type="category" dataKey="class" stroke={COLORS.axis} fontSize={11} width={80} />
                 <Tooltip {...tooltipStyle} formatter={(v) => pct(v)} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="f1" name="F1" fill={COLORS.fedavg} radius={[0, 4, 4, 0]} />
-                <Bar dataKey="recall" name="Recall" fill={COLORS.median} radius={[0, 4, 4, 0]} />
+                <Bar dataKey="f1" name="F1" {...barProps('s1', print, COLORS.fedavg)} radius={[0, 4, 4, 0]} />
+                <Bar dataKey="recall" name="Recall" {...barProps('s2', print, COLORS.median)} radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

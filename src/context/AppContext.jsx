@@ -5,6 +5,7 @@ import { prepareDataset, suggestTarget } from '../ml/preprocess.js';
 import { partitionData, distributionMatrix } from '../ml/partition.js';
 import { parseHidden } from '../ml/federated.js';
 import { runJob } from '../lib/engine.js';
+import { applyPalette } from '../lib/palette.jsx';
 
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
@@ -30,7 +31,14 @@ export function AppProvider({ children }) {
   const [attackCfg, setAttackCfg] = useState(() => load('fl.attack', DEFAULT_ATTACK));
   const [experiments, setExperiments] = useState(() => { try { return JSON.parse(localStorage.getItem('fl.experiments') || '[]'); } catch { return []; } });
   const [job, setJob] = useState(IDLE);
+  const [print, setPrint] = useState(() => localStorage.getItem('fl.print') === '1'); // photocopy-friendly mode
   const handle = useRef(null);
+
+  applyPalette(print); // swap the shared chart palette before children render
+  useEffect(() => {
+    document.documentElement.dataset.theme = print ? 'print' : 'dark';
+    try { localStorage.setItem('fl.print', print ? '1' : '0'); } catch { /* ignore */ }
+  }, [print]);
 
   useEffect(() => save('fl.clients', clientCfg), [clientCfg]);
   useEffect(() => save('fl.train', trainCfg), [trainCfg]);
@@ -144,7 +152,7 @@ export function AppProvider({ children }) {
   const value = {
     table, datasetName, target, setTarget, prepared, partition,
     clientCfg, trainCfg, setTrainCfg, attackCfg, setAttackCfg,
-    experiments, job, setJob,
+    experiments, job, setJob, print, setPrint,
     loadSample, loadFile, prepare, configureClients,
     startTrain, startCompare, startSweep, cancelJob, clearExperiments, deleteExperiment, quickStart,
   };

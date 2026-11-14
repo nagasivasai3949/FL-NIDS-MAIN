@@ -3,11 +3,12 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContai
 import { useApp } from '../context/AppContext.jsx';
 import JobPanel from '../components/JobPanel.jsx';
 import { Alert, Badge, Button, Card, COLORS, ConfusionMatrix, Empty, LinkButton, MODEL_LABELS, PageHeader, Select, Table, Td, pct, tooltipStyle } from '../components/ui.jsx';
+import { barProps, classBarProps, lineProps, ROLE } from '../lib/palette.jsx';
 
 const KEYS = ['centralized', 'local_ensemble', 'fedavg', 'median'];
 
 export default function Comparison() {
-  const { prepared, partition, job, experiments, startCompare, trainCfg, attackCfg } = useApp();
+  const { prepared, partition, job, experiments, startCompare, trainCfg, attackCfg, print } = useApp();
   const [cmKey, setCmKey] = useState('fedavg');
   const [error, setError] = useState('');
   const exp = useMemo(() => experiments.find((e) => e.kind === 'compare'), [experiments]);
@@ -61,7 +62,7 @@ export default function Comparison() {
                   <YAxis {...axis} domain={[0, 1]} tickFormatter={(v) => `${Math.round(v * 100)}%`} />
                   <Tooltip {...tooltipStyle} formatter={(v) => pct(v)} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
-                  {KEYS.map((k) => <Bar key={k} dataKey={k} name={MODEL_LABELS[k]} fill={COLORS[k]} radius={[3, 3, 0, 0]} />)}
+                  {KEYS.map((k) => <Bar key={k} dataKey={k} name={MODEL_LABELS[k]} {...barProps(ROLE[k], print, COLORS[k])} radius={[3, 3, 0, 0]} />)}
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -74,7 +75,7 @@ export default function Comparison() {
                   <XAxis dataKey="metric" {...axis} />
                   <YAxis {...axis} tickFormatter={(v) => `${(v * 100).toFixed(1)}%`} />
                   <Tooltip {...tooltipStyle} formatter={(v) => pct(v)} />
-                  {KEYS.map((k) => <Bar key={k} dataKey={k} name={MODEL_LABELS[k]} fill={COLORS[k]} radius={[3, 3, 0, 0]} />)}
+                  {KEYS.map((k) => <Bar key={k} dataKey={k} name={MODEL_LABELS[k]} {...barProps(ROLE[k], print, COLORS[k])} radius={[3, 3, 0, 0]} />)}
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -87,7 +88,7 @@ export default function Comparison() {
               const m = models[k].metrics;
               return (
                 <tr key={k} className={k === best ? 'bg-cyan/5' : ''}>
-                  <Td className="font-medium text-white"><span className="mr-2 inline-block h-2.5 w-2.5 rounded-full" style={{ background: COLORS[k] }} />{MODEL_LABELS[k]}</Td>
+                  <Td className="font-medium text-white"><span className="mr-2 inline-block h-3 w-3 rounded-full border border-[#111111]" style={{ background: COLORS[k] }} />{MODEL_LABELS[k]}</Td>
                   <Td>{pct(m.accuracy)}</Td><Td>{pct(m.precision_macro)}</Td><Td>{pct(m.recall_macro)}</Td>
                   <Td className="font-semibold text-white">{pct(m.f1_macro)}</Td><Td>{pct(m.fpr_macro)}</Td>
                   <Td className="text-slate-400">{models[k].duration_s.toFixed(1)} s</Td>
@@ -111,8 +112,8 @@ export default function Comparison() {
                   <YAxis {...axis} domain={[0, 1]} tickFormatter={(v) => `${Math.round(v * 100)}%`} />
                   <Tooltip {...tooltipStyle} formatter={(v) => pct(v)} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Line type="monotone" dataKey="FedAvg" stroke={COLORS.fedavg} strokeWidth={2.5} dot={false} />
-                  <Line type="monotone" dataKey="Median" stroke={COLORS.median} strokeWidth={2.5} dot={false} />
+                  <Line type="monotone" dataKey="FedAvg" {...lineProps('s1', print, COLORS.fedavg)} />
+                  <Line type="monotone" dataKey="Median" {...lineProps('s2', print, COLORS.median)} />
                 </LineChart>
               </ResponsiveContainer>
             </div>

@@ -24,3 +24,39 @@ body {
 input[type="range"] { accent-color: #22d3ee; }
 select, input { color-scheme: dark; }
 .recharts-tooltip-wrapper { outline: none; }
+
+/* ---------------------------------------------------------------------------
+   PRINT / PHOTOCOPY MODE
+   White page, black text, well-separated grays. All Tailwind colour utilities read
+   these CSS variables, so overriding them re-themes the whole app without code changes.
+   --------------------------------------------------------------------------- */
+:root[data-theme="print"] {
+  --color-navy-950: #ffffff;   /* sidebar */
+  --color-navy-900: #f1f1f1;   /* inner panels, inputs */
+  --color-navy-800: #ffffff;   /* cards */
+  --color-navy-700: #d9d9d9;   /* table headers, hover */
+  --color-navy-600: #6b6b6b;   /* borders */
+  --color-accent: #333333;
+  --color-cyan: #111111;
+  --color-white: #000000;
+  --color-slate-100: #111111; --color-slate-200: #111111; --color-slate-300: #1c1c1c;
+  --color-slate-400: #2b2b2b; --color-slate-500: #3a3a3a; --color-slate-600: #4a4a4a;
+  --color-blue-300: #1c1c1c;
+  --color-cyan-100: #111111; --color-cyan-300: #1c1c1c;
+  --color-red-200: #111111; --color-red-300: #1c1c1c; --color-red-400: #2b2b2b; --color-red-500: #444444;
+  --color-emerald-200: #111111; --color-emerald-300: #1c1c1c; --color-emerald-500: #444444;
+  --color-amber-200: #111111; --color-amber-300: #1c1c1c; --color-amber-400: #2b2b2b; --color-amber-500: #444444;
+}
+:root[data-theme="print"] body, :root[data-theme="print"] #root > div { background: #ffffff; color: #111111; }
+:root[data-theme="print"] .recharts-text { fill: #111111; }
+:root[data-theme="print"] .recharts-cartesian-grid line { stroke: #c4c4c4; }
+:root[data-theme="print"] section, :root[data-theme="print"] table { border-color: #6b6b6b; }
+:root[data-theme="print"] section { box-shadow: none; border-width: 1.5px; }
+
+@media print {
+  * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  html, body, #root { height: auto; }
+  main { max-width: none !important; padding: 0 !important; }
+  section { break-inside: avoid; }
+  @page { margin: 12mm; }
+}
